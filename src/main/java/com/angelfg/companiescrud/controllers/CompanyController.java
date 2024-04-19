@@ -2,6 +2,8 @@ package com.angelfg.companiescrud.controllers;
 
 import com.angelfg.companiescrud.entities.Company;
 import com.angelfg.companiescrud.services.CompanyService;
+import io.micrometer.core.annotation.Timed;
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -20,6 +22,9 @@ public class CompanyController {
 
     private final CompanyService companyService;
 
+    // Trazabilidad con http://localhost:9411
+    @Observed(name = "company.name")
+    @Timed(value = "company.name")
     @Operation(summary = "get a company given a company name")
     @GetMapping(path = "{name}")
     public ResponseEntity<Company> get(@PathVariable String name) {
@@ -35,6 +40,10 @@ public class CompanyController {
         return ResponseEntity.ok(this.companyService.readByName(name));
     }
 
+
+    // Trazabilidad
+    @Observed(name = "company.save")
+    @Timed(value = "company.save")
     @Operation(summary = "save in DB a company given a company form body")
     @PostMapping
     public ResponseEntity<Company> post(@RequestBody Company company) {
